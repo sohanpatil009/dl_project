@@ -1,0 +1,7 @@
+path: D:\photo\shanky_project\wideband-signal-recognition\data\yolo_dataset
+train: images/train
+val: images/val
+test: images/test
+nc: 1
+names:
+- signal

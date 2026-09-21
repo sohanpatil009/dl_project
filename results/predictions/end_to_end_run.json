@@ -1,0 +1,92 @@
+[
+  {
+    "sample_id": 0,
+    "results": [
+      {
+        "signal_id": 1,
+        "frequency_range": [
+          -6000.0,
+          6000.0
+        ],
+        "time_range": [
+          0.0,
+          0.49472
+        ],
+        "detector_confidence": 0.99,
+        "predicted_modulation": "64QAM",
+        "classifier_confidence": 0.5228501558303833,
+        "true_modulation": "16QAM"
+      },
+      {
+        "signal_id": 2,
+        "frequency_range": [
+          -49000.0,
+          -37000.0
+        ],
+        "time_range": [
+          0.0,
+          0.49472
+        ],
+        "detector_confidence": 0.99,
+        "predicted_modulation": "64QAM",
+        "classifier_confidence": 0.7332258820533752,
+        "true_modulation": "BPSK"
+      },
+      {
+        "signal_id": 3,
+        "frequency_range": [
+          37000.0,
+          49000.0
+        ],
+        "time_range": [
+          0.0,
+          0.49472
+        ],
+        "detector_confidence": 0.99,
+        "predicted_modulation": "16QAM",
+        "classifier_confidence": 0.8893632292747498,
+        "true_modulation": "BPSK"
+      }
+    ]
+  },
+  {
+    "sample_id": 1,
+    "results": [
+      {
+        "signal_id": 1,
+        "frequency_range": [
+          -11941.474548228187,
+          58.525451771813096
+        ],
+        "time_range": [
+          0.0,
+          0.49472
+        ],
+        "detector_confidence": 0.99,
+        "predicted_modulation": "64QAM",
+        "classifier_confidence": 0.6197595596313477,
+        "true_modulation": "64QAM"
+      }
+    ]
+  },
+  {
+    "sample_id": 2,
+    "results": [
+      {
+        "signal_id": 1,
+        "frequency_range": [
+          -38830.78858163475,
+          -26830.788581634748
+        ],
+        "time_range": [
+          0.0,
+          0.49472
+        ],
+        "detector_confidence": 0.99,
+        "predicted_modulation": "16QAM",
+        "classifier_confidence": 0.48271363973617554,
+        "true_modulation": "64QAM"
+      }
+    ]
+  }
+]
