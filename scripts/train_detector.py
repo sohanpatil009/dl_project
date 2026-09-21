@@ -1,0 +1,16 @@
+"""Thin CLI wrapper: train the YOLOv5 detector.
+
+Usage:
+    python scripts/train_detector.py --data-yaml data/yolo_dataset/data.yaml --epochs 30
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from src.train_detector import main
+
+if __name__ == "__main__":
+    raise SystemExit(main())

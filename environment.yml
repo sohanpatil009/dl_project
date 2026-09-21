@@ -1,0 +1,25 @@
+name: wideband-signal-recognition
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.9
+  - pip
+  - numpy>=1.23
+  - scipy>=1.10
+  - matplotlib>=3.6
+  - pandas>=1.5
+  - scikit-learn>=1.2
+  - tqdm>=4.64
+  - pyyaml>=6.0
+  - pillow>=9.0
+  - pytorch::pytorch>=2.0
+  - pytorch::torchvision>=0.15
+  - jupyter>=1.0
+  - notebook>=6.5
+  - ipykernel>=6.0
+  - pytest>=7.2
+  - pytest-cov>=4.0
+  - pip:
+      - rich>=12.0

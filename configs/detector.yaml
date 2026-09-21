@@ -1,0 +1,18 @@
+# YOLOv5 detector configuration.
+# Mirrors Section III-B / Table II of Vagollari et al. (2023):
+# single-class ("signal") YOLOv5s detector on 1024x1024 spectrograms.
+variant: "yolov5s"          # yolov5s | yolov5m | yolov5l
+input_size: 640             # imgsz used for training (spectrograms are 1024px, letterboxed)
+batch_size: 16
+epochs: 30
+patience: 10                # early-stopping patience
+lr: 0.001                   # lr0
+weight_decay: 0.0005
+conf_threshold: 0.25        # inference confidence threshold
+iou_threshold: 0.45         # NMS IoU threshold
+num_classes: 1
+class_names: ["signal"]
+pretrained_weights: "yolov5s.pt"
+project: "models/runs"
+name: "detector"
+device: ""                  # "" = auto (cuda if available else cpu)

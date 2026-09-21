@@ -1,0 +1,66 @@
+# Default experiment configuration (flat keys map 1:1 onto src.config.Config).
+seed: 42
+
+# Wideband capture
+fs: 200000.0
+duration: 0.5
+
+# Spectrogram
+n_fft: 1024
+hop_length: 64
+window: "hann"
+db_floor: -120.0
+image_size: 1024
+
+# Narrowband signal
+symbol_rate: 10000.0
+roll_off: 0.35
+max_signals: 4
+min_signals: 1
+bandwidth: 12000.0
+padding: 2000.0
+
+# Modulation classes
+mod_classes: [BPSK, QPSK, 8PSK, 16QAM, 64QAM, NOISE, NO_SIGNAL]
+num_classes: 7
+no_signal_index: 6
+
+# SNR
+snr_train_db: 20.0
+snr_eval_db: [-5.0, 0.0, 5.0, 10.0, 15.0, 20.0]
+
+# Dataset sizes
+wideband_train: 600
+wideband_val: 150
+wideband_test: 150
+narrowband_per_class: 400
+
+# Data source: "synthetic" (built-in) or "radioml" (real internet data, see
+# src/public_data.py). Spectrogram image container: jpg (smallest), png, bmp.
+data_source: "synthetic"
+image_format: "jpg"
+radioml_url: "https://zenodo.org/api/records/18397070/files/RML2016.10a.tar.bz2/content"
+radioml_snr_db: 18.0
+radioml_include_extra: false
+
+# YOLO detector
+yolo_input_size: 640
+yolo_batch_size: 16
+yolo_epochs: 30
+yolo_patience: 10
+yolo_lr: 0.001
+yolo_weight_decay: 0.0005
+yolo_conf: 0.25
+yolo_iou: 0.45
+yolo_variant: "yolov5s"
+
+# Classifier
+clf_seq_len: 128
+clf_batch_size: 128
+clf_epochs: 40
+clf_patience: 8
+clf_lr: 0.001
+clf_weight_decay: 0.0001
+clf_arch: "resnet18"
+clf_use_transfer: true
+clf_use_augmentation: true

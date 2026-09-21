@@ -1,0 +1,22 @@
+# Modulation classifier configuration.
+# Mirrors Section III-C of Vagollari et al. (2023):
+# 1-D CNN / ResNet on 2x128 I/Q clips, 7 classes.
+arch: "resnet18"            # cnn1d | resnet18 | resnet34
+seq_len: 128                # IQ samples per example
+in_channels: 2              # I + Q
+num_classes: 7
+class_names: [BPSK, QPSK, 8PSK, 16QAM, 64QAM, NOISE, NO_SIGNAL]
+batch_size: 128
+epochs: 40
+patience: 8                 # early-stopping patience
+lr: 0.001
+weight_decay: 0.0001
+use_transfer: true          # init deeper layers from torchvision ImageNet weights
+use_augmentation: true      # time-shift + scale jitter + AWGN
+use_scheduler: true         # cosine annealing
+use_class_weights: false
+label_smoothing: 0.05
+time_shift_max: 16
+noise_std: 0.01
+scale_jitter: 0.1
+device: ""                  # "" = auto
