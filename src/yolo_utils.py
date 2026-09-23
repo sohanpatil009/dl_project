@@ -46,8 +46,13 @@ def yolov5_available() -> bool:
 
 
 def install_yolov5(force: bool = False) -> Path:
-    """Clone the official YOLOv5 repository if not already present.
+    """Ensure the Ultralytics runtime is importable.
 
+    Historically this cloned the YOLOv5 repo; current training uses the
+    ``ultralytics`` package directly, so we only ensure it is installed.
+    On Colab torch is preinstalled with CUDA — we must NOT pull
+    extra heavy deps (roboflow/albumentations) that force numpy/torch
+    downgrades, so install is limited to ``ultralytics``.
     Returns the path to the cloned repository.
     """
     if yolov5_available() and not force:
@@ -55,11 +60,16 @@ def install_yolov5(force: bool = False) -> Path:
     if YOLOV5_DIR.exists() and force:
         shutil.rmtree(YOLOV5_DIR, ignore_errors=True)
     YOLOV5_DIR.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        import ultralytics  # noqa: F401  type: ignore
+        return YOLOV5_DIR
+    except ImportError:
+        pass
     cmd = [
-        sys.executable, "-m", "pip", "install", "-qr",
-        "ultralytics>=8.0.0", "roboflow", "albumentations",
+        sys.executable, "-m", "pip", "install", "-q",
+        "ultralytics>=8.0.0",
     ]
-    print("[yolov5] Installing Ultralytics runtime dependencies ...")
+    print("[yolov5] Installing Ultralytics runtime (ultralytics only) ...")
     try:
         subprocess.run(cmd, check=False, stdout=subprocess.DEVNULL,
                        stderr=subprocess.STDOUT, timeout=300)

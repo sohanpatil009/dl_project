@@ -89,22 +89,63 @@ try:
 except Exception as e:
     print('PyTorch not installed:', e)
 
-# Mount Google Drive if you want to load your own data
-try:
-    from google.colab import drive  # type: ignore
-    if not os.path.exists('/content/drive'):
+# --- Locate the project root (works for ALL Colab upload methods) ---
+# Option A: you cloned a git repo  -> /content/wideband-signal-recognition
+# Option B: you uploaded a .zip and unzipped it -> /content/<your-folder>
+# Option C: you mounted Drive and uploaded there
+# We simply search upwards from CWD for `src/config.py`.
+from pathlib import Path as _P
+def _find_project_root(start='.', markers=('src/config.py', 'requirements.txt')):
+    start = _P(start).resolve()
+    for cand in [start] + list(start.parents):
+        if all((cand / m).exists() for m in markers):
+            return cand
+        # also accept a single nested checkout, e.g. /content/repo/<project>
+        try:
+            subs = sorted([p for p in cand.iterdir() if p.is_dir()])
+        except Exception:
+            continue
+        for sub in subs:
+            try:
+                if all((sub / m).exists() for m in markers):
+                    return sub
+            except Exception:
+                continue
+    return None
+ROOT = _find_project_root('.')
+if ROOT is None:
+    # Last resort: optional git clone. EDIT THIS URL to your own fork,
+    # or upload the project zip manually (see guide below) and re-run.
+    _REPO_URL = 'https://github.com/<your-user>/wideband-signal-recognition.git'
+    _DEST = '/content/wideband-signal-recognition'
+    print(f'Project not found. Attempting git clone from {_REPO_URL} ...')
+    print('If this fails (404), upload the project folder/zip to /content and re-run this cell.')
+    import subprocess
+    r = subprocess.run(['git', 'clone', _REPO_URL, _DEST], check=False)
+    ROOT = _find_project_root(_DEST) or _find_project_root('/content')
+if ROOT is None:
+    raise RuntimeError(
+        'Cannot find project root (expected src/config.py + requirements.txt). '
+        'Upload the project folder to /content (e.g. via Files > Upload, unzip if needed) '
+        'then re-run this cell. Current CWD: ' + os.getcwd() +
+        ' | /content: ' + str(sorted(os.listdir(\"/content\")) if os.path.exists(\"/content\") else \"n/a\"))
+os.chdir(str(ROOT))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+print('CWD (project root):', os.getcwd())
+
+# Optional: mount Google Drive ONLY if you need files from Drive.
+# Disabled by default because drive.mount() blocks on an auth code.
+MOUNT_DRIVE = False
+if MOUNT_DRIVE:
+    try:
+        from google.colab import drive  # type: ignore
         drive.mount('/content/drive')
         print('Drive mounted at /content/drive')
-except Exception:
-    print('Not running on Google Colab - skipping drive mount')
-
-# Clone the project if running on Colab / Kaggle (IPython-safe: no indented shell escapes)
-import subprocess
-if not os.path.exists('/content/wideband-signal-recognition'):
-    subprocess.run(['git', 'clone', 'https://github.com/<your-user>/wideband-signal-recognition.git',
-                    '/content/wideband-signal-recognition'], check=False)
-os.chdir('/content/wideband-signal-recognition')
-print('CWD:', os.getcwd())
+    except Exception as e:
+        print('Drive mount skipped/failed:', e)
+else:
+    print('Drive mount skipped (set MOUNT_DRIVE=True to enable).')
 """))
 
 
@@ -115,8 +156,39 @@ SECTIONS.append(md("""
 ## 4. Dependency Installation
 """))
 SECTIONS.append(code("""
-!pip install -q -r requirements.txt
-!pip install -q ultralytics>=8.0.0
+# Colab already ships torch/torchvision + CUDA + jupyter. A plain
+# `pip install -r requirements.txt` would REINSTALL torch (~2 GB) and
+# downgrade numpy, breaking the runtime. So we filter those out.
+import importlib.util
+def _have(pkg): return importlib.util.find_spec(pkg) is not None
+print('torch present:', _have('torch'), '| torchvision present:', _have('torchvision'))
+_SKIPPED = ('torch', 'torchvision', 'ipython', 'ipykernel', 'jupyter', 'notebook', 'nbclient', 'nbformat')
+kept = []
+for line in open('requirements.txt'):
+    s = line.strip()
+    if not s or s.startswith('#'):
+        continue
+    name = s.split('>')[0].split('<')[0].split('=')[0].split('[')[0].strip().lower().replace('_', '-')
+    if name in _SKIPPED and _have(name.split('-')[0] if '-' not in name else name):
+        print('  skip (preinstalled):', s)
+        continue
+    if name in ('torch', 'torchvision') and _have(name):
+        print('  skip (preinstalled):', s)
+        continue
+    kept.append(s)
+open('/tmp/requirements-colab.txt', 'w').write('\\n'.join(kept) + '\\n')
+print('Installing:', kept)
+!pip install -q -r /tmp/requirements-colab.txt
+!pip install -q \"ultralytics>=8.0.0\" \"opencv-python-headless>=4.6\"
+# Sanity check
+import numpy, scipy, sklearn, PIL
+print('numpy', numpy.__version__, '| scipy', scipy.__version__, '| PIL', PIL.__version__)
+try:
+    import torch, ultralytics
+    print('torch', torch.__version__, '| cuda:', torch.cuda.is_available(), '| ultralytics OK')
+except Exception as e:
+    print('Import check FAILED:', e)
+    print('If torch broke, Runtime > Restart runtime and re-run only this cell.')
 """))
 
 
@@ -565,7 +637,7 @@ spec = compute_spectrogram(sample.samples, fs=sample.fs,
                            n_fft=cfg.n_fft, hop_length=cfg.hop_length)
 # Run detection
 tmp_path = FIGURES_DIR / '_tmp.jpg'
-Image.fromarray(spectrogram_to_image(spec, image_size=cfg.image_size), 'RGB').save(tmp_path)
+Image.fromarray(spectrogram_to_image(spec, image_size=cfg.image_size)).save(tmp_path)
 dets = run_yolov5_inference(model, [str(tmp_path)], cfg=cfg, conf=0.25)[0]
 print(f'Detections on the test sample: {len(dets)}')
 

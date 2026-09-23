@@ -10,7 +10,19 @@ from pathlib import Path
 from typing import Iterable, List, Optional, Sequence, Tuple
 
 import matplotlib
-matplotlib.use("Agg")  # headless backend by default
+# Use a headless backend only when NOT running inside a notebook/Colab.
+# Forcing "Agg" unconditionally breaks plt.show() in Colab/Jupyter
+# (figures render as blank). In scripts (no DISPLAY) keep Agg.
+import os as _os
+if _os.environ.get("MPLBACKEND") is None:
+    try:
+        from IPython import get_ipython as _get_ipython  # type: ignore
+        _ip = _get_ipython()
+        _in_notebook = _ip is not None and getattr(_ip, "kernel", None) is not None
+    except Exception:
+        _in_notebook = False
+    if not _in_notebook and not _os.environ.get("DISPLAY"):
+        matplotlib.use("Agg")  # headless backend for plain scripts
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np

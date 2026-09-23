@@ -1,5 +1,7 @@
-# Core scientific stack
-numpy>=1.23,<2.0
+# Core scientific stack (Colab-compatible: no upper pin on numpy;
+# Colab ships numpy 2.x + torch preinstalled — a `<2.0` pin forces a
+# downgrade and breaks torch/ultralytics/opencv at import time)
+numpy>=1.23
 scipy>=1.10
 matplotlib>=3.6
 pandas>=1.5
@@ -16,9 +18,14 @@ torchvision>=0.15
 
 # YOLOv5 dependencies (Ultralytics repo will be cloned at runtime)
 # Pinned to be compatible with Ultralytics YOLOv5 v7.0+
+# NOTE on Colab/Kaggle: torch/torchvision/jupyter are preinstalled with CUDA.
+# The Colab notebook (§4) filters those lines out automatically so pip
+# does not reinstall a ~2 GB torch build or downgrade numpy.
 Pillow>=9.0
 PyYAML>=5.4.1
 tqdm>=4.64.0
+ultralytics>=8.0.0
+opencv-python-headless>=4.6
 
 # Notebook / dashboard utilities
 ipython>=8.0

@@ -92,8 +92,8 @@ SECTIONS.append(md("""
 Kaggle images already ship torch/torchvision. We only add what is missing.
 """))
 SECTIONS.append(code("""
-%pip install -q -r requirements.txt
-%pip install -q "ultralytics>=8.0.0"
+%pip install -q --no-deps -r requirements.txt
+%pip install -q "ultralytics>=8.0.0" "opencv-python-headless>=4.6"
 """))
 
 SECTIONS.append(md("""

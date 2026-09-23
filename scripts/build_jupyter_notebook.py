@@ -578,7 +578,7 @@ spec = compute_spectrogram(sample.samples, fs=sample.fs,
                            n_fft=cfg.n_fft, hop_length=cfg.hop_length)
 # Run detection
 tmp_path = FIGURES_DIR / '_tmp.jpg'
-Image.fromarray(spectrogram_to_image(spec, image_size=cfg.image_size), 'RGB').save(tmp_path)
+Image.fromarray(spectrogram_to_image(spec, image_size=cfg.image_size)).save(tmp_path)
 dets = run_yolov5_inference(model, [str(tmp_path)], cfg=cfg, conf=0.25)[0]
 print(f'Detections on the test sample: {len(dets)}')
 
