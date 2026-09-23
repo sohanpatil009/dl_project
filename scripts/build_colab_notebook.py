@@ -116,8 +116,8 @@ ROOT = _find_project_root('.')
 if ROOT is None:
     # Last resort: optional git clone. EDIT THIS URL to your own fork,
     # or upload the project zip manually (see guide below) and re-run.
-    _REPO_URL = 'https://github.com/<your-user>/wideband-signal-recognition.git'
-    _DEST = '/content/wideband-signal-recognition'
+    _REPO_URL = 'https://github.com/sohanpatil009/dl_project.git'
+    _DEST = '/content/dl_project'
     print(f'Project not found. Attempting git clone from {_REPO_URL} ...')
     print('If this fails (404), upload the project folder/zip to /content and re-run this cell.')
     import subprocess
